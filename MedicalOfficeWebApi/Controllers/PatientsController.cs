@@ -23,22 +23,62 @@ namespace MedicalOfficeWebApi.Controllers
 
         // GET: api/Patients
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Patient>>> GetPatients()
+        public async Task<ActionResult<IEnumerable<PatientDTO>>> GetPatients()
         {
-            return await _context.Patients.Include(p => p.Doctor).ToListAsync();
+            return await _context.Patients
+                .Include(p => p.Doctor)
+                .Select(p => new PatientDTO
+                {
+                    ID = p.ID,
+                    FirstName = p.FirstName,
+                    MiddleName = p.MiddleName,
+                    LastName = p.LastName,
+                    OHIP = p.OHIP,
+                    DOB = p.DOB,
+                    ExpYrVisits = p.ExpYrVisits,
+                    RowVersion = p.RowVersion,
+                    DoctorID = p.DoctorID,
+                    Doctor = new DoctorDTO
+                    {
+                        ID = p.Doctor.ID,
+                        FirstName = p.Doctor.FirstName,
+                        MiddleName = p.Doctor.MiddleName,
+                        LastName = p.Doctor.LastName
+                    }
+                })
+                .ToListAsync();
         }
 
         // GET: api/Patients/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Patient>> GetPatient(int id)
+        public async Task<ActionResult<PatientDTO>> GetPatient(int id)
         {
             var patient = await _context.Patients
                 .Include(p => p.Doctor)
+                .Select(p => new PatientDTO
+                {
+                    ID = p.ID,
+                    FirstName = p.FirstName,
+                    MiddleName = p.MiddleName,
+                    LastName = p.LastName,
+                    OHIP = p.OHIP,
+                    DOB = p.DOB,
+                    ExpYrVisits = p.ExpYrVisits,
+                    RowVersion = p.RowVersion,
+                    DoctorID = p.DoctorID,
+                    Doctor = new DoctorDTO
+                    {
+                        ID = p.Doctor.ID,
+                        FirstName = p.Doctor.FirstName,
+                        MiddleName = p.Doctor.MiddleName,
+                        LastName = p.Doctor.LastName
+                    }
+                })
                 .FirstOrDefaultAsync(p => p.ID == id);
 
             if (patient == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Error: Patient record not found."});
             }
 
             return patient;
@@ -46,12 +86,41 @@ namespace MedicalOfficeWebApi.Controllers
 
         // GET: api/PatientsByDoctor
         [HttpGet("ByDoctor/{id}")]
-        public async Task<ActionResult<IEnumerable<Patient>>> GetPatientsByDoctor(int id)
+        public async Task<ActionResult<IEnumerable<PatientDTO>>> GetPatientsByDoctor(int id)
         {
-            return await _context.Patients.Include(e => e.Doctor)
-                .Where(e => e.DoctorID == id).ToListAsync();
-        }
+            var patientDTOs = await _context.Patients
+                .Include(e => e.Doctor)
+                .Select(p => new PatientDTO
+                {
+                    ID = p.ID,
+                    FirstName = p.FirstName,
+                    MiddleName = p.MiddleName,
+                    LastName = p.LastName,
+                    OHIP = p.OHIP,
+                    DOB = p.DOB,
+                    ExpYrVisits = p.ExpYrVisits,
+                    RowVersion = p.RowVersion,
+                    DoctorID = p.DoctorID,
+                    Doctor = new DoctorDTO
+                    {
+                        ID = p.Doctor.ID,
+                        FirstName = p.Doctor.FirstName,
+                        MiddleName = p.Doctor.MiddleName,
+                        LastName = p.Doctor.LastName
+                    }
+                })
+                .Where(e => e.DoctorID == id)
+                .ToListAsync();
 
+            if (patientDTOs.Count() > 0)
+            {
+                return patientDTOs;
+            }
+            else
+            {
+                return NotFound(new { message = "Error: No Patient records for that Doctor." });
+            }
+        }
 
         // PUT: api/Patients/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
