@@ -27,6 +27,7 @@ namespace MedicalOfficeWebApi.Controllers
         {
             return await _context.Patients
                 .Include(p => p.Doctor)
+                .Include(p => p.PatientConditions)
                 .Select(p => new PatientDTO
                 {
                     ID = p.ID,
@@ -37,6 +38,38 @@ namespace MedicalOfficeWebApi.Controllers
                     DOB = p.DOB,
                     ExpYrVisits = p.ExpYrVisits,
                     RowVersion = p.RowVersion,
+                    NumberOfConditions = p.PatientConditions.Count,
+                    DoctorID = p.DoctorID,
+                    Doctor = new DoctorDTO
+                    {
+                        ID = p.Doctor.ID,
+                        FirstName = p.Doctor.FirstName,
+                        MiddleName = p.Doctor.MiddleName,
+                        LastName = p.Doctor.LastName
+                    }
+                })
+                .ToListAsync();
+        }
+
+        // GET: api/Patients
+        [HttpGet("history")]
+        public async Task<ActionResult<IEnumerable<PatientDTO>>> GetPatientsHistory()
+        {
+            return await _context.Patients
+                .Include(p => p.Doctor)
+                .Include(p => p.PatientConditions).ThenInclude(p => p.Condition)
+                .Select(p => new PatientDTO
+                {
+                    ID = p.ID,
+                    FirstName = p.FirstName,
+                    MiddleName = p.MiddleName,
+                    LastName = p.LastName,
+                    OHIP = p.OHIP,
+                    DOB = p.DOB,
+                    ExpYrVisits = p.ExpYrVisits,
+                    RowVersion = p.RowVersion,
+                    Conditions = p.PatientConditions.Select(c => new ConditionDTO { ID = c.ConditionID,
+                    ConditionName = c.Condition.ConditionName}).ToList(),
                     DoctorID = p.DoctorID,
                     Doctor = new DoctorDTO
                     {
