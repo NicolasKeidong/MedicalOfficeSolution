@@ -96,59 +96,126 @@ namespace MedicalOfficeWebApi.Controllers
         // PUT: api/Doctors/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDoctor(int id, Doctor doctor)
+        public async Task<IActionResult> PutDoctor(int id, DoctorDTO doctorDTO)
         {
-            if (id != doctor.ID)
+            if (id != doctorDTO.ID)
             {
-                return BadRequest();
+                return BadRequest(new { message = "Error: ID does not match Doctor." });
             }
 
-            _context.Entry(doctor).State = EntityState.Modified;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            //Get the record to update
+            var doctorToUpdate = await _context.Doctors.FindAsync(id);
+
+            //Check that you got it
+            if (doctorToUpdate == null)
+            {
+                return NotFound(new { message = "Error: Doctor record not found." });
+            }
+
+            if (doctorDTO.RowVersion != null)
+            {
+                if (!doctorToUpdate.RowVersion.SequenceEqual(doctorDTO.RowVersion))
+                {
+                    return Conflict(new { message = "Concurrency Error: Doctor has been changed by another user. Try again later." });
+                }
+            }
+
+            //Update the properties for the entity object from the DTO object
+            doctorToUpdate.ID = doctorDTO.ID;
+            doctorToUpdate.LastName = doctorDTO.LastName;
+            doctorToUpdate.FirstName = doctorDTO.FirstName;
+            doctorToUpdate.MiddleName = doctorDTO.MiddleName;
+            doctorToUpdate.RowVersion = doctorDTO.RowVersion;
+
+            _context.Entry(doctorToUpdate).Property("RowVersion").OriginalValue = doctorDTO.RowVersion;
 
             try
             {
                 await _context.SaveChangesAsync();
+                return NoContent();
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!DoctorExists(id))
                 {
-                    return NotFound();
+                    return Conflict(new { message = "Concurrency Error: Doctor has been Removed." });
                 }
                 else
                 {
-                    throw;
+                    return Conflict(new { message = "Concurrency Error: Doctor has been updated by another user." });
                 }
             }
-
-            return NoContent();
+            catch (DbUpdateException)
+            {
+                return BadRequest(new { message = "Unable to save changes to the database. Try again, and if the problem persist, contact to your database administrator." });
+            }
         }
 
         // POST: api/Doctors
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Doctor>> PostDoctor(Doctor doctor)
+        public async Task<ActionResult<Doctor>> PostDoctor(DoctorDTO doctorDTO)
         {
-            _context.Doctors.Add(doctor);
-            await _context.SaveChangesAsync();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            return CreatedAtAction("GetDoctor", new { id = doctor.ID }, doctor);
+            Doctor doctor = new Doctor
+            {
+                FirstName = doctorDTO.FirstName,
+                MiddleName = doctorDTO.MiddleName,
+                LastName = doctorDTO.LastName
+            };
+
+            try
+            {
+                _context.Doctors.Add(doctor);
+                await _context.SaveChangesAsync();
+
+                doctorDTO.ID = doctor.ID;
+                doctorDTO.RowVersion = doctor.RowVersion;
+
+                return CreatedAtAction(nameof(GetDoctor), new { id = doctor.ID }, doctorDTO);
+            }
+            catch (DbUpdateException)
+            {
+                return BadRequest(new { message = "Unable to save changes to the database. Try again, and if the problem persist, contact to your database administrator." });
+            }
         }
 
         // DELETE: api/Doctors/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDoctor(int id)
         {
+
             var doctor = await _context.Doctors.FindAsync(id);
             if (doctor == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Delete Error: Doctor has already been removed." });
             }
-
-            _context.Doctors.Remove(doctor);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            try
+            {
+                _context.Doctors.Remove(doctor);
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            catch (DbUpdateException dex)
+            {
+                if(dex.GetBaseException().Message.Contains("FOREIGN KEY constraint failed."))
+                {
+                    return BadRequest(new { message = "Delete Error: You cannot delete a Doctor with Patients." });
+                }
+                else
+                {
+                    return BadRequest(new { message = "Delete Error: Unable to delete Doctor. Try again, and if the problem persist, contact to your database administrator." });
+                }
+            }
         }
 
         private bool DoctorExists(int id)
