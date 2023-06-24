@@ -28,6 +28,10 @@ namespace MedicalOfficeWebApi.Models
         public int DoctorID { get; set; }
         public DoctorDTO Doctor { get; set; }
 
+        public ICollection<ConditionDTO> Conditions { get; set; }
+
+        public int? NumberOfConditions { get; set; } = null;
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (DOB > DateTime.Today.AddDays(1))

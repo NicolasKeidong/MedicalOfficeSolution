@@ -42,6 +42,8 @@ namespace MedicalOfficeWebApi.Models
         public int DoctorID { get; set; }
         public Doctor Doctor { get; set; }
 
+        public ICollection<PatientCondition> PatientConditions { get; set; } = new HashSet<PatientCondition>();
+
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (DOB > DateTime.Today.AddDays(1))

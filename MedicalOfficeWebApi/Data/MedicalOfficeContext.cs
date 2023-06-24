@@ -32,6 +32,9 @@ namespace MedicalOfficeWebApi.Data
         }
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Patient> Patients { get; set; }
+        public DbSet<PatientCondition> PatientConditions { get; set; }
+        public DbSet<Condition> Conditions { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +48,15 @@ namespace MedicalOfficeWebApi.Data
                 .HasMany(p => p.Patients)
                 .WithOne(d => d.Doctor)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PatientCondition>()
+                .HasOne(pc => pc.Condition)
+                .WithMany(c => c.PatientConditions)
+                .HasForeignKey(pc => pc.ConditionID)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<PatientCondition>()
+                .HasKey(t => new { t.ConditionID, t.PatientID });
 
         }
 

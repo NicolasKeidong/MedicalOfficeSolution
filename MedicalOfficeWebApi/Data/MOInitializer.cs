@@ -85,6 +85,43 @@ namespace MedicalOfficeWebApi.Data
                     });
                     context.SaveChanges();
                 }
+                //Conditions
+                if (!context.Conditions.Any())
+                {
+                    string[] conditions = new string[] { "Asthma", "Cancer", "Cardiac disease", "Diabetes", "Hypertension", "Seizure disorder", "Circulation problems", "Bleeding disorder", "Thyroid condition", "Liver Disease", "Measles", "Mumps" };
+
+                    foreach (string condition in conditions)
+                    {
+                        Condition c = new Condition
+                        {
+                            ConditionName = condition
+                        };
+                        context.Conditions.Add(c);
+                    }
+                    context.SaveChanges();
+                }
+                //PatientConditions
+                if (!context.PatientConditions.Any())
+                {
+                    context.PatientConditions.AddRange(
+                        new PatientCondition
+                        {
+                            ConditionID = context.Conditions.FirstOrDefault(c => c.ConditionName == "Cancer").ID,
+                            PatientID = context.Patients.FirstOrDefault(p => p.LastName == "Smith" && p.FirstName == "Oliver").ID
+                        },
+                        new PatientCondition
+                        {
+                            ConditionID = context.Conditions.FirstOrDefault(c => c.ConditionName == "Cardiac disease").ID,
+                            PatientID = context.Patients.FirstOrDefault(p => p.LastName == "Wilson" && p.FirstName == "Barney").ID
+                        },
+                        new PatientCondition
+                        {
+                            ConditionID = context.Conditions.FirstOrDefault(c => c.ConditionName == "Diabetes").ID,
+                            PatientID = context.Patients.FirstOrDefault(p => p.LastName == "Roy" && p.FirstName == "Emma").ID
+                        });
+                    context.SaveChanges();
+                }
+
             }
             catch (Exception ex)
             {
