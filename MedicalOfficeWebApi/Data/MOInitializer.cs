@@ -79,6 +79,7 @@ namespace MedicalOfficeWebApi.Data
                         MiddleName = "Olivia",
                         LastName = "Roy",
                         OHIP = "4124124123",
+                        DOB = DateTime.Parse("1987-02-22"),
                         ExpYrVisits = 2,
                         DoctorID = context.Doctors.FirstOrDefault(d => d.FirstName == "Liam").ID
                     });
