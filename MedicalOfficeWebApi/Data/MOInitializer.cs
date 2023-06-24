@@ -23,21 +23,21 @@ namespace MedicalOfficeWebApi.Data
                     context.Doctors.AddRange(
                      new Doctor
                      {
-                         FirstName = "Gregory",
-                         MiddleName = "A",
-                         LastName = "House"
+                         FirstName = "Valentina",
+                         MiddleName = "K",
+                         LastName = "Galarce"
                      },
 
                      new Doctor
                      {
-                         FirstName = "Doogie",
+                         FirstName = "Noah",
                          MiddleName = "R",
-                         LastName = "Houser"
+                         LastName = "Martinez"
                      },
                      new Doctor
                      {
-                         FirstName = "Charles",
-                         LastName = "Xavier"
+                         FirstName = "Liam",
+                         LastName = "Williams"
                      });
                     context.SaveChanges();
                 }
@@ -46,41 +46,41 @@ namespace MedicalOfficeWebApi.Data
                     context.Patients.AddRange(
                     new Patient
                     {
-                        FirstName = "Fred",
-                        MiddleName = "Reginald",
-                        LastName = "Flintstone",
+                        FirstName = "Oliver",
+                        MiddleName = "Logan",
+                        LastName = "Smith",
                         OHIP = "1231231234",
                         DOB = DateTime.Parse("1955-09-01"),
                         ExpYrVisits = 6,
-                        DoctorID = context.Doctors.FirstOrDefault(d => d.FirstName == "Gregory" && d.LastName == "House").ID
+                        DoctorID = context.Doctors.FirstOrDefault(d => d.FirstName == "Valentina" && d.LastName == "Galarce").ID
                     },
                     new Patient
                     {
-                        FirstName = "Wilma",
-                        MiddleName = "Jane",
-                        LastName = "Flintstone",
+                        FirstName = "Lucas",
+                        MiddleName = "James",
+                        LastName = "Lee",
                         OHIP = "1321321324",
                         DOB = DateTime.Parse("1964-04-23"),
                         ExpYrVisits = 2,
-                        DoctorID = context.Doctors.FirstOrDefault(d => d.FirstName == "Gregory" && d.LastName == "House").ID
+                        DoctorID = context.Doctors.FirstOrDefault(d => d.FirstName == "Valentina" && d.LastName == "Galarce").ID
                     },
                     new Patient
                     {
                         FirstName = "Barney",
-                        LastName = "Rubble",
+                        LastName = "Wilson",
                         OHIP = "3213213214",
                         DOB = DateTime.Parse("1964-02-22"),
                         ExpYrVisits = 2,
-                        DoctorID = context.Doctors.FirstOrDefault(d => d.FirstName == "Doogie" && d.LastName == "Houser").ID
+                        DoctorID = context.Doctors.FirstOrDefault(d => d.FirstName == "Noah" && d.LastName == "Martinez").ID
                     },
                     new Patient
                     {
-                        FirstName = "Jane",
-                        MiddleName = "Samantha",
-                        LastName = "Doe",
+                        FirstName = "Emma",
+                        MiddleName = "Olivia",
+                        LastName = "Roy",
                         OHIP = "4124124123",
                         ExpYrVisits = 2,
-                        DoctorID = context.Doctors.FirstOrDefault(d => d.FirstName == "Charles" && d.LastName == "Xavier").ID
+                        DoctorID = context.Doctors.FirstOrDefault(d => d.FirstName == "Liam").ID
                     });
                     context.SaveChanges();
                 }
