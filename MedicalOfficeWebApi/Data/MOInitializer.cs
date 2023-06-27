@@ -116,6 +116,11 @@ namespace MedicalOfficeWebApi.Data
                         },
                         new PatientCondition
                         {
+                            ConditionID = context.Conditions.FirstOrDefault(c => c.ConditionName == "Asthma").ID,
+                            PatientID = context.Patients.FirstOrDefault(p => p.LastName == "Lee" && p.FirstName == "Lucas").ID
+                        },
+                        new PatientCondition
+                        {
                             ConditionID = context.Conditions.FirstOrDefault(c => c.ConditionName == "Diabetes").ID,
                             PatientID = context.Patients.FirstOrDefault(p => p.LastName == "Roy" && p.FirstName == "Emma").ID
                         });
