@@ -68,8 +68,10 @@ namespace MedicalOfficeWebApi.Controllers
                     DOB = p.DOB,
                     ExpYrVisits = p.ExpYrVisits,
                     RowVersion = p.RowVersion,
-                    Conditions = p.PatientConditions.Select(c => new ConditionDTO { ID = c.ConditionID,
-                    ConditionName = c.Condition.ConditionName}).ToList(),
+                    Conditions = p.PatientConditions.Select(c => new ConditionDTO { 
+                        ID = c.ConditionID,
+                        ConditionName = c.Condition.ConditionName
+                    }).ToList(),
                     DoctorID = p.DoctorID,
                     Doctor = new DoctorDTO
                     {
