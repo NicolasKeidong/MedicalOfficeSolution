@@ -120,11 +120,12 @@ namespace MedicalOfficeWebApi.Controllers
         }
 
         // GET: api/PatientsByDoctor
-        [HttpGet("ByDoctor/{id}")]
+        [HttpGet("byDoctorHistory/{id}")]
         public async Task<ActionResult<IEnumerable<PatientDTO>>> GetPatientsByDoctor(int id)
         {
             var patientDTOs = await _context.Patients
                 .Include(e => e.Doctor)
+                .Include(p => p.PatientConditions).ThenInclude(p => p.Condition)
                 .Select(p => new PatientDTO
                 {
                     ID = p.ID,
@@ -135,6 +136,11 @@ namespace MedicalOfficeWebApi.Controllers
                     DOB = p.DOB,
                     ExpYrVisits = p.ExpYrVisits,
                     RowVersion = p.RowVersion,
+                    Conditions = p.PatientConditions.Select(c => new ConditionDTO
+                    {
+                        ID = c.ConditionID,
+                        ConditionName = c.Condition.ConditionName
+                    }).ToList(),
                     DoctorID = p.DoctorID,
                     Doctor = new DoctorDTO
                     {
@@ -262,6 +268,7 @@ namespace MedicalOfficeWebApi.Controllers
 
                 patientDTO.ID = patient.ID;
                 patientDTO.RowVersion = patient.RowVersion;
+                patientDTO.NumberOfConditions = patient.PatientConditions.Count;
 
                 return CreatedAtAction(nameof(GetPatient), new { id = patient.ID }, patientDTO);
             }
