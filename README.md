@@ -1,13 +1,13 @@
 # Medical Office Management
-Medical Office API is a basic Web API application for a medical office. It is a good start to have a better understanding on how to create a web API.
+Medical Office API is a basic Web API application for a medical office. It is a good start to have a better understanding of how to create a web API.
 This project also includes the use of Data Transfer Objects (DTOs)[^1], the Models are:
 
-![Models](https://github.com/NicolasKeidong/MedicalOfficeSolution/assets/122652469/f7948aaf-255e-420a-952e-7064f4e4f83d)
+![models](https://github.com/NicolasKeidong/MedicalOfficeSolution/assets/122652469/f0b78f3a-9f11-4fcb-b2c7-274016a4b65a)
 
-![api](https://github.com/NicolasKeidong/MedicalOfficeSolution/assets/122652469/eeacd0dc-8d9f-44eb-a3e1-909a788f51c8)
+![json](https://github.com/NicolasKeidong/MedicalOfficeSolution/assets/122652469/c375b910-b488-41f4-aff3-c614bf2e09c1)
 
+![swagger](https://github.com/NicolasKeidong/MedicalOfficeSolution/assets/122652469/12d2af4e-715a-4d35-8ced-1031c2bfea19)
 
-![Swagger](https://github.com/NicolasKeidong/MedicalOfficeSolution/assets/122652469/ef5709ad-fd6d-44ba-8687-a39e27898f19)
 
 ## Installation
 - Clone this repository.
